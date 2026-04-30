@@ -4,34 +4,148 @@
     <meta charset="utf-8">
     <title>{{ message }}</title>
     <style>
+        * { box-sizing: border-box; }
         body {
             margin: 0;
+            min-height: 100vh;
+            background: #fff5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #4a1d2a;
+        }
+        .view {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #fff5f7;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            padding: 2rem 1rem;
         }
+        .view.hidden { display: none; }
+
         h1 {
             color: #e0245e;
             font-size: 3rem;
             margin: 0 0 1.5rem;
         }
-        img {
+
+        .heart-btn {
+            background: none;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+        }
+        .heart-btn img {
             width: 240px;
             height: auto;
             animation: beat 1.2s ease-in-out infinite;
+            display: block;
         }
+        .heart-btn:hover img { filter: brightness(1.1); }
         @keyframes beat {
             0%, 100% { transform: scale(1); }
             50%      { transform: scale(1.1); }
         }
+        .hint {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #a8536e;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: #fff;
+            border: 2px solid #e0245e;
+            color: #e0245e;
+            font-size: 1.5rem;
+            line-height: 1;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(224, 36, 94, 0.2);
+        }
+        .back-btn:hover { background: #e0245e; color: #fff; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            width: 100%;
+        }
+        figure {
+            margin: 0;
+            background: #fff;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 12px rgba(224, 36, 94, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        figure img {
+            width: 100%;
+            max-height: 260px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+        figcaption {
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            color: #4a1d2a;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.25rem; }
+        }
     </style>
 </head>
 <body>
-    <h1>{{ message }}</h1>
-    <img src="{{ url_for('static', filename='heart.svg') }}" alt="heart">
+    <main id="heart-view" class="view">
+        <h1>{{ message }}</h1>
+        <button id="heart-btn" class="heart-btn" type="button" aria-label="Show gallery">
+            <img src="{{ url_for('static', filename='heart.svg') }}" alt="heart">
+        </button>
+        <p class="hint">click the heart</p>
+    </main>
+
+    <main id="gallery-view" class="view hidden">
+        <button id="back-btn" class="back-btn" type="button" aria-label="Back to heart" title="Back">&larr;</button>
+        <div class="grid">
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Navagio%2C_Zante_01.jpg/250px-Navagio%2C_Zante_01.jpg" alt="Navagio Beach, Zakynthos">
+                <figcaption>Navagio Beach, Greece</figcaption>
+            </figure>
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/1029_Acropolis_of_Athens_in_Greece_at_night_Photo_by_Giles_Laurent.jpg/330px-1029_Acropolis_of_Athens_in_Greece_at_night_Photo_by_Giles_Laurent.jpg" alt="Acropolis of Athens">
+                <figcaption>Acropolis of Athens</figcaption>
+            </figure>
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Sounio_Naos_Poseidona.jpg/250px-Sounio_Naos_Poseidona.jpg" alt="Temple of Poseidon, Sounion">
+                <figcaption>Temple of Poseidon, Sounion</figcaption>
+            </figure>
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Metallica_wordmark_2008.svg/250px-Metallica_wordmark_2008.svg.png" alt="Metallica logo">
+                <figcaption>Metallica</figcaption>
+            </figure>
+        </div>
+    </main>
+
+    <script>
+        const heartView = document.getElementById('heart-view');
+        const galleryView = document.getElementById('gallery-view');
+        document.getElementById('heart-btn').addEventListener('click', () => {
+            heartView.classList.add('hidden');
+            galleryView.classList.remove('hidden');
+        });
+        document.getElementById('back-btn').addEventListener('click', () => {
+            galleryView.classList.add('hidden');
+            heartView.classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>
