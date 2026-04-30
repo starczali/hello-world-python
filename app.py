@@ -1,8 +1,13 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
 from greetings import get_greeting
 
 app = Flask(__name__)
+
+
+@app.get("/")
+def index():
+    return render_template("index.html", message="I love you")
 
 
 @app.get("/greet")

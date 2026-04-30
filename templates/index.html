@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ message }}</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fff5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        h1 {
+            color: #e0245e;
+            font-size: 3rem;
+            margin: 0 0 1.5rem;
+        }
+        img {
+            width: 240px;
+            height: auto;
+            animation: beat 1.2s ease-in-out infinite;
+        }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <img src="{{ url_for('static', filename='heart.svg') }}" alt="heart">
+</body>
+</html>
