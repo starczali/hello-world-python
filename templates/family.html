@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Family</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #fff5f7;
+            color: #4a1d2a;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: #fff;
+            border-bottom: 1px solid #f4cdd7;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #e0245e;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            border: 2px solid #e0245e;
+            color: #e0245e;
+            text-decoration: none;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+        .back-link:hover { background: #e0245e; color: #fff; }
+
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .layout {
+            display: grid;
+            grid-template-rows: auto auto auto;
+            row-gap: 2rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .row { display: flex; justify-content: center; align-items: stretch; gap: 2rem; flex-wrap: wrap; }
+        .parents { justify-content: space-between; }
+        .parents .slot { flex: 0 1 280px; display: flex; }
+        .self    { justify-content: center; }
+        .children { justify-content: center; }
+
+        .card {
+            background: #fff;
+            border: 2px solid #f4cdd7;
+            border-radius: 0.75rem;
+            padding: 0.85rem 1rem;
+            min-width: 200px;
+            max-width: 280px;
+            box-shadow: 0 2px 10px rgba(224, 36, 94, 0.12);
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(224, 36, 94, 0.22); border-color: #e0245e; }
+        .card.focused { border-color: #e0245e; background: #ffeaf1; box-shadow: 0 4px 16px rgba(224, 36, 94, 0.3); cursor: default; }
+        .card.focused:hover { transform: none; }
+        .card .role {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #a8536e;
+            margin-bottom: 0.25rem;
+        }
+        .card .name { font-weight: 600; color: #4a1d2a; }
+        .card .maiden { color: #7a3a4d; font-weight: 400; font-size: 0.9em; }
+        .card .meta { color: #7a3a4d; font-size: 0.85rem; margin-top: 0.2rem; }
+
+        .placeholder {
+            background: transparent;
+            border: 2px dashed #f4cdd7;
+            color: #c98aa0;
+            font-style: italic;
+            cursor: default;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 84px;
+        }
+        .placeholder:hover { transform: none; box-shadow: none; border-color: #f4cdd7; }
+
+        @media (max-width: 700px) {
+            .row { flex-direction: column; align-items: stretch; }
+            .parents .slot { flex: 1 1 auto; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="back-link" href="/" title="Back to heart" aria-label="Back to heart">&larr;</a>
+        <h1>Family</h1>
+    </header>
+    <main>
+        <div class="layout">
+            <div class="row parents">
+                <div class="slot" id="slot-father"></div>
+                <div class="slot" id="slot-mother"></div>
+            </div>
+            <div class="row self" id="row-self"></div>
+            <div class="row children" id="row-children"></div>
+        </div>
+    </main>
+    <script>
+        const people = {{ people | tojson }};
+        const byId = Object.fromEntries(people.map(p => [p.id, p]));
+
+        function cardHtml(p, role, opts = {}) {
+            const focused = !!opts.focused;
+            const maidenBit = p.maiden_name ? ' <span class="maiden">(' + p.maiden_name + ')</span>' : '';
+            const metaParts = [];
+            if (p.birthdate) metaParts.push(p.birthdate);
+            if (p.age !== null && p.age !== undefined) metaParts.push("age " + p.age);
+            const metaBit = metaParts.length ? '<div class="meta">' + metaParts.join(' · ') + '</div>' : '';
+            const cls = 'card' + (focused ? ' focused' : '');
+            const dataAttr = focused ? '' : ' data-id="' + p.id + '"';
+            return '<div class="' + cls + '"' + dataAttr + '>'
+                + (role ? '<div class="role">' + role + '</div>' : '')
+                + '<div class="name">' + p.name + maidenBit + '</div>'
+                + metaBit
+                + '</div>';
+        }
+
+        function placeholderHtml(role) {
+            return '<div class="card placeholder">' + role + ' unknown</div>';
+        }
+
+        function render(id) {
+            const p = byId[id];
+            if (!p) return;
+
+            const father = p.father_id ? byId[p.father_id] : null;
+            const mother = p.mother_id ? byId[p.mother_id] : null;
+            const children = people.filter(o => o.father_id === id || o.mother_id === id);
+
+            document.getElementById('slot-father').innerHTML =
+                father ? cardHtml(father, 'Father') : placeholderHtml('Father');
+            document.getElementById('slot-mother').innerHTML =
+                mother ? cardHtml(mother, 'Mother') : placeholderHtml('Mother');
+            document.getElementById('row-self').innerHTML =
+                cardHtml(p, null, { focused: true });
+            document.getElementById('row-children').innerHTML =
+                children.length
+                    ? children.map(c => cardHtml(c, 'Child')).join('')
+                    : '<div class="card placeholder">no children</div>';
+        }
+
+        document.addEventListener('click', e => {
+            const card = e.target.closest('.card[data-id]');
+            if (card) render(card.dataset.id);
+        });
+
+        if (people.length) render(people[0].id);
+    </script>
+</body>
+</html>
