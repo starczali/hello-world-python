@@ -68,6 +68,23 @@
         }
         .back-btn:hover { background: #e0245e; color: #fff; }
 
+        .logout-form {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            margin: 0;
+        }
+        .logout-form button {
+            background: #fff;
+            border: 1px solid #f4cdd7;
+            color: #a8536e;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+        .logout-form button:hover { border-color: #e0245e; color: #e0245e; }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -105,6 +122,10 @@
     </style>
 </head>
 <body>
+    <form class="logout-form" method="post" action="/logout">
+        <button type="submit">Sign out</button>
+    </form>
+
     <main id="heart-view" class="view">
         <h1>{{ message }}</h1>
         <button id="heart-btn" class="heart-btn" type="button" aria-label="Show gallery">

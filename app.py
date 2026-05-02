@@ -1,12 +1,41 @@
+import hmac
 import json
 import os
+import secrets
 from datetime import date
+from functools import wraps
 
-from flask import Flask, jsonify, render_template, request
+from flask import (
+    Flask,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 from greetings import get_greeting
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+
+APP_USERNAME = os.environ.get("APP_USERNAME")
+APP_PASSWORD = os.environ.get("APP_PASSWORD")
+if not APP_USERNAME or not APP_PASSWORD:
+    raise RuntimeError(
+        "APP_USERNAME and APP_PASSWORD environment variables must be set"
+    )
+
+
+def login_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("logged_in"):
+            return redirect(url_for("login", next=request.path))
+        return view(*args, **kwargs)
+
+    return wrapped
 
 
 def calculate_age(birthdate):
@@ -28,17 +57,44 @@ def load_family():
     return people
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "")
+        password = request.form.get("password", "")
+        if hmac.compare_digest(username, APP_USERNAME) and hmac.compare_digest(
+            password, APP_PASSWORD
+        ):
+            session["logged_in"] = True
+            next_url = request.args.get("next") or url_for("index")
+            return redirect(next_url)
+        return (
+            render_template("login.html", error="Invalid username or password"),
+            401,
+        )
+    return render_template("login.html", error=None)
+
+
+@app.post("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
 @app.get("/")
+@login_required
 def index():
     return render_template("index.html", message="I love you")
 
 
 @app.get("/family")
+@login_required
 def family():
     return render_template("family.html", people=load_family())
 
 
 @app.get("/greet")
+@login_required
 def greet():
     name = request.args.get("name", "World")
     lang = request.args.get("lang", "en")
