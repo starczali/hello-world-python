@@ -20,21 +20,8 @@ from greetings import get_greeting
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
-_visible_keys = sorted(
-    k for k in os.environ if k.startswith(("APP_", "SECRET_", "RAILWAY_"))
-)
-print(
-    f"[startup-debug] total env keys={len(os.environ)} "
-    f"app/secret/railway keys={_visible_keys}",
-    flush=True,
-)
-
-APP_USERNAME = os.environ.get("APP_USERNAME")
-APP_PASSWORD = os.environ.get("APP_PASSWORD")
-if not APP_USERNAME or not APP_PASSWORD:
-    raise RuntimeError(
-        "APP_USERNAME and APP_PASSWORD environment variables must be set"
-    )
+APP_USERNAME = os.environ.get("APP_USERNAME", "tarczali")
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "Sandor86")
 
 
 def login_required(view):
