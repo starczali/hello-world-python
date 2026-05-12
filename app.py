@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 
 APP_USERNAME = os.environ.get("APP_USERNAME", "tarczali")
-APP_PASSWORD = os.environ.get("APP_PASSWORD", "Sandor86")
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "saffron-crimson-breeze-harbor-84")
 
 
 def login_required(view):
