@@ -47,16 +47,16 @@
       "id": "p7",
       "name": "Tarczali Tibor",
       "birthdate": "1959-07-03",
-      "father_id": null,
-      "mother_id": null
+      "father_id": "p18",
+      "mother_id": "p17"
     },
     {
       "id": "p8",
       "name": "Tarczali Mária",
-      "maiden_name": null,
+      "maiden_name": "Szabó",
       "birthdate": "1959-01-07",
-      "father_id": null,
-      "mother_id": null
+      "father_id": "p19",
+      "mother_id": "p20"
     },
     {
       "id": "p9",
@@ -114,6 +114,35 @@
       "id": "p16",
       "name": "László Anna",
       "maiden_name": "Székely",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p17",
+      "name": "Tarczali Ida",
+      "maiden_name": "Darvas",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p18",
+      "name": "Tarczali Sándor",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p19",
+      "name": "Szabó Géza",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p20",
+      "name": "Székely Mária",
       "birthdate": null,
       "father_id": null,
       "mother_id": null
