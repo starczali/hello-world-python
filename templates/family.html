@@ -59,7 +59,7 @@
         .row { display: flex; justify-content: center; align-items: stretch; gap: 2rem; flex-wrap: wrap; }
         .parents { justify-content: space-between; }
         .parents .slot { flex: 0 1 280px; display: flex; }
-        .self    { justify-content: center; }
+        .self    { justify-content: center; gap: 1rem; }
         .children { justify-content: center; }
 
         .card {
@@ -67,11 +67,13 @@
             border: 2px solid #f4cdd7;
             border-radius: 0.75rem;
             padding: 0.85rem 1rem;
-            min-width: 200px;
-            max-width: 280px;
+            width: 240px;
             box-shadow: 0 2px 10px rgba(224, 36, 94, 0.12);
             cursor: pointer;
             transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(224, 36, 94, 0.22); border-color: #e0245e; }
         .card.focused { border-color: #e0245e; background: #ffeaf1; box-shadow: 0 4px 16px rgba(224, 36, 94, 0.3); cursor: default; }
@@ -146,20 +148,46 @@
             return '<div class="card placeholder">' + role + ' unknown</div>';
         }
 
+        function findSpouses(id) {
+            const p = byId[id];
+            if (!p) return [];
+            const ids = new Set();
+            people.forEach(o => {
+                if (o.father_id === id && o.mother_id) ids.add(o.mother_id);
+                if (o.mother_id === id && o.father_id) ids.add(o.father_id);
+            });
+            (p.spouse_ids || []).forEach(sid => { if (byId[sid]) ids.add(sid); });
+            ids.delete(id);
+            return [...ids].map(sid => byId[sid]).filter(Boolean);
+        }
+
+        function spouseRole(spouse) {
+            const sid = spouse.id;
+            if (people.some(o => o.father_id === sid)) return 'Husband';
+            if (people.some(o => o.mother_id === sid)) return 'Wife';
+            return 'Spouse';
+        }
+
         function render(id) {
             const p = byId[id];
             if (!p) return;
 
             const father = p.father_id ? byId[p.father_id] : null;
             const mother = p.mother_id ? byId[p.mother_id] : null;
+            const spouses = findSpouses(id);
             const children = people.filter(o => o.father_id === id || o.mother_id === id);
 
             document.getElementById('slot-father').innerHTML =
                 father ? cardHtml(father, 'Father') : placeholderHtml('Father');
             document.getElementById('slot-mother').innerHTML =
                 mother ? cardHtml(mother, 'Mother') : placeholderHtml('Mother');
+            const selfRole = spouseRole(p);
+            const pair = [{ person: p, role: selfRole, focused: true }];
+            spouses.forEach(s => pair.push({ person: s, role: spouseRole(s), focused: false }));
+            const rank = r => r === 'Husband' ? 0 : r === 'Wife' ? 1 : 2;
+            pair.sort((a, b) => rank(a.role) - rank(b.role));
             document.getElementById('row-self').innerHTML =
-                cardHtml(p, null, { focused: true });
+                pair.map(x => cardHtml(x.person, x.focused ? null : x.role, { focused: x.focused })).join('');
             document.getElementById('row-children').innerHTML =
                 children.length
                     ? children.map(c => cardHtml(c, 'Child')).join('')
