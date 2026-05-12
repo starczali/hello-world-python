@@ -12,8 +12,8 @@
       "name": "Tarczali Dorottya",
       "maiden_name": "Katona",
       "birthdate": "1990-01-30",
-      "father_id": null,
-      "mother_id": null
+      "father_id": "p11",
+      "mother_id": "p12"
     },
     {
       "id": "p3",
@@ -69,6 +69,51 @@
       "id": "p10",
       "name": "Tarczali Irénke",
       "maiden_name": null,
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p11",
+      "name": "Katona József",
+      "birthdate": "1962-01-03",
+      "father_id": "p13",
+      "mother_id": "p14"
+    },
+    {
+      "id": "p12",
+      "name": "Katona Anna",
+      "maiden_name": "László",
+      "birthdate": "1965-12-19",
+      "father_id": "p15",
+      "mother_id": "p16"
+    },
+    {
+      "id": "p13",
+      "name": "Katona Zsigmond",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p14",
+      "name": "Katona Gizella",
+      "maiden_name": "Sebesi",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p15",
+      "name": "László Miklós",
+      "birthdate": null,
+      "father_id": null,
+      "mother_id": null
+    },
+    {
+      "id": "p16",
+      "name": "László Anna",
+      "maiden_name": "Székely",
       "birthdate": null,
       "father_id": null,
       "mother_id": null
